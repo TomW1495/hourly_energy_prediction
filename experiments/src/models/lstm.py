@@ -3,7 +3,8 @@ import torch
 import torch.nn as nn
 import pytorch_lightning as pl
 from pytorch_lightning import LightningModule
-
+from torchmetrics import SymmetricMeanAbsolutePercentageError
+from ..constants import Metrics
 
 class LSTMRegressor(LightningModule):
     '''
@@ -56,12 +57,30 @@ class LSTMRegressor(LightningModule):
         x, y = batch
         y_hat = self(x)
         loss = self.criterion(y_hat, y)
-        self.log('avg_val_loss', loss, on_step=False, on_epoch=True)
-        return loss
+        return {Metrics.VAL_LOSS: loss, Metrics.PREDICTIONS: y_hat, Metrics.TARGETS: y}
+
+    def validation_epoch_end(self, outs):
+        avg_val_loss = torch.stack([o[Metrics.VAL_LOSS] for o in outs]).mean()
+        predictions = torch.stack([o[Metrics.PREDICTIONS] for o in outs])
+        targets = torch.stack([o[Metrics.TARGETS] for o in outs])
+        self.log("avg_val_loss", avg_val_loss)
+        smape = SymmetricMeanAbsolutePercentageError()
+        smape_metric = smape(predictions, targets)
+        print(f"Val SMAPE: {smape_metric}, Val Loss: {avg_val_loss}\n")
+        self.log("Val SMAPE", avg_val_loss)
 
     def test_step(self, batch, batch_idx):
         x, y = batch
         y_hat = self(x)
         loss = self.criterion(y_hat, y)
-        self.log('test_loss', loss)
-        return loss
+        return {Metrics.TEST_LOSS: loss, Metrics.PREDICTIONS: y_hat, Metrics.TARGETS: y}
+
+    def test_epoch_end(self, outs):
+        avg_test_loss = torch.stack([o[Metrics.TEST_LOSS] for o in outs]).mean()
+        predictions = torch.stack([o[Metrics.PREDICTIONS] for o in outs])
+        targets = torch.stack([o[Metrics.TARGETS] for o in outs])
+        self.log("avg_test_loss", avg_test_loss)
+        smape = SymmetricMeanAbsolutePercentageError()
+        smape_metric = smape(predictions, targets)
+        print(f"Test SMAPE: {smape_metric}, Test Loss: {avg_test_loss}\n")
+        self.log("Test SMAPE", avg_test_loss)
