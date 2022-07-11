@@ -83,4 +83,4 @@ class LSTMRegressor(LightningModule):
         smape = SymmetricMeanAbsolutePercentageError()
         smape_metric = smape(predictions, targets)
         print(f"Test SMAPE: {smape_metric}, Test Loss: {avg_test_loss}\n")
-        self.log("Test SMAPE", avg_test_loss)
+        self.log("Test SMAPE", smape_metric)

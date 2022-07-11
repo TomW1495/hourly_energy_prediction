@@ -2,9 +2,9 @@ import torch.nn as nn
 
 params = dict(
     lookback = 90,
-    batch_size = 64,
+    batch_size = 512,
     criterion = nn.MSELoss(),
-    max_epochs = 10,
+    max_epochs = 50,
     n_features = 5,
     num_workers = 8,
     hidden_size = 100,

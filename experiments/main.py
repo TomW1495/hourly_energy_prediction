@@ -19,7 +19,7 @@ def main():
 
     trainer = Trainer(
         callbacks=[EarlyStopping(monitor="avg_val_loss", mode="min", patience=10)],
-        default_root_dir="checkpoints/",
+        #default_root_dir="checkpoints/",
         max_epochs=params['max_epochs'],
         logger=logger,
         gpus=torch.cuda.device_count(),
