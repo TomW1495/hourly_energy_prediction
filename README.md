@@ -35,6 +35,7 @@ A random sample of the test has been plot to see those results below:
 ### Epoch 8 Predictions
 <img src="diagrams/epoch_8_predictions.png" alt="Image Collection Process" height="200px"/>
 
+It is clear to see from the predictions that, as expected, the model at epoch 8 produces better predictions overall. In both cases the model makes better predictions as the energy usage transitions from decreasing to increasing. Both models also struggle more with the usage transitioning from increasing to decreasing.
 
 ## Licence
 energy_prediction uses a [Apache 2.0 License]((https://github.com/TomW1495/energy_prediction/blob/main/LICENSE))
